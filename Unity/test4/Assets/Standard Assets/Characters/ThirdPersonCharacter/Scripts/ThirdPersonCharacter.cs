@@ -83,7 +83,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			UpdateAnimator(move);
 			TimeSpan diffTime = DateTime.UtcNow - m_lastSendTimer;
 			if (diffTime.Seconds > 1) {
-				sendMoveToServer (move);
+				//sendMoveToServer (move);
 				m_lastPosition = transform.position;
 				m_lastSendTimer = DateTime.UtcNow;
 			}

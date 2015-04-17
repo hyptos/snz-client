@@ -18,9 +18,10 @@ public class connexionClient : MonoBehaviour {
 	
 	void Start () {   
 		setupSocket();
-		readRessource();
-		//writeSocket("Tuturuuu");
-		//closeSocket ();
+		writeSocket("Tuturuuu");
+		Debug.Log ("ok");
+		readSocket();
+		closeSocket ();
 		
 	}
 	void Update () {
@@ -41,32 +42,39 @@ public class connexionClient : MonoBehaviour {
 
 	public void readSocket(){
 		
-		readRessource();
-		/*byte[] TabIdentifier = new byte[4];
-		theStream.Read(TabIdentifier,0,4);
-		int Identifier = BitConverter.ToInt32(TabIdentifier, 0);
+		//readRessource();
+		byte[] TabTaille = new byte[4];
+		theStream.Read(TabTaille,0,4);
+		int taille = BitConverter.ToInt32(TabTaille, 0);
 		
-		switch (Identifier)
+		byte[] TabIdentifier = new byte[1];
+		theStream.Read(TabIdentifier,0,1);
+		char[] Identifier = System.Text.Encoding.ASCII.GetChars(TabIdentifier);
+		Debug.Log (Identifier.Length);
+
+		switch (Identifier[0])
 		{
-		case 11:
+		case 'r':
 			//Read Ressourse
 			readRessource();
 			break;
-		case 12:
+		case 'w':
+			//Read Ressourse
+			string str = readString(taille-1);
+			Debug.Log(str);
+			break;
+		case 'u':
 			//Event
 			ZEvent monEvent = new ZEvent();
 			monEvent.fromBinary(theStream);
 			break;
 		default:
-			byte[] TabTaille = new byte[4];
-			theStream.Read(TabTaille,0,4);
-			int tailleTrame = BitConverter.ToInt32(TabTaille, 0);
-			
-			Debug.Log ("type inconnue, je jette tout : " + tailleTrame + "Byte");
-			byte[] dechet = new byte[tailleTrame];
-			theStream.Read(dechet,0,tailleTrame);
+			taille = taille-1;
+			Debug.Log ("type inconnue, je jette tout : " + taille + "Byte");
+			byte[] dechet = new byte[taille];
+			theStream.Read(dechet,0,taille);
 			break;
-		}*/
+		}
 	}
 	
 	public void readRessource() { 
@@ -100,24 +108,27 @@ public class connexionClient : MonoBehaviour {
 		
 		byte[] isInt = new byte[4];
 		isInt = BitConverter.GetBytes((UInt32)theLine.Length);
+
 		byte[] asciiBytes = System.Text.Encoding.ASCII.GetBytes(theLine);
-		byte[] msg = new byte[isInt.Length+asciiBytes.Length];
+
+		byte[] ident = System.Text.Encoding.ASCII.GetBytes("w");
+
+		byte[] msg = new byte[isInt.Length+asciiBytes.Length+1];
+
 		for (int i=0;i<isInt.Length;i++){
 			msg[i] = isInt[i];
 		}
-		for (int i=4;i<asciiBytes.Length+4;i++){
-			msg[i] = asciiBytes[i-4];
+		msg[isInt.Length] = ident[0];
+		for (int i=5;i<asciiBytes.Length+5;i++){
+			msg[i] = asciiBytes[i-5
+			                    ];
 		}
 		theStream.Write (msg, 0, msg.Length);
 	}
 
-	public string readString() {
-		byte[] isInt = new byte[4];
-		theStream.Read(isInt,0,4);
-		int test = BitConverter.ToInt32(isInt, 0);
-		
-		byte[] bytes = new byte[test];
-		theStream.Read(bytes,0,test);
+	public string readString(int taille) {
+		byte[] bytes = new byte[taille];
+		theStream.Read(bytes,0,taille);
 		string str = System.Text.Encoding.ASCII.GetString(bytes);
 
 		return str;
