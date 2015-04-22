@@ -1,4 +1,7 @@
+//css_import connexionClient.cs
 using UnityEngine;
+using System;
+using System.IO;
 
 namespace UnityStandardAssets.Characters.ThirdPerson
 {
@@ -28,7 +31,9 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		Vector3 m_CapsuleCenter;
 		CapsuleCollider m_Capsule;
 		bool m_Crouching;
-
+		
+		Vector3 m_lastPosition;
+		DateTime m_lastSendTimer;
 
 		void Start()
 		{
@@ -40,6 +45,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
 			m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			m_OrigGroundCheckDistance = m_GroundCheckDistance;
+			m_lastPosition = Vector2.zero;
+			m_lastSendTimer = DateTime.UtcNow;
 		}
 
 
@@ -73,6 +80,18 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
 			// send input and other state parameters to the animator
 			UpdateAnimator(move);
+			TimeSpan diffTime = DateTime.UtcNow - m_lastSendTimer;
+			if (diffTime.Seconds > 1) {
+				//sendMoveToServer (move);
+				m_lastPosition = transform.position;
+				m_lastSendTimer = DateTime.UtcNow;
+			}
+		}
+		
+		public void sendMoveToServer(Vector3 move) {
+			GameObject o = GameObject.Find("connexionServer");
+			connexionClient cc = (connexionClient)o.GetComponent (typeof(connexionClient));
+			cc.envoieMove(0, 0, 0, transform.position, move);
 		}
 
 

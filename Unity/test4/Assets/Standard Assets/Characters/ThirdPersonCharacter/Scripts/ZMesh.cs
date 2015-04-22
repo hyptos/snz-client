@@ -13,7 +13,6 @@ public class ZMesh {
 		byte[] isInt = new byte[4];
 		theStream.Read (isInt, 0, 4);
 		int taille = (int)BitConverter.ToInt32 (isInt, 0); 
-		Debug.Log ("trois " + taille);
 		
 		byte[] QUuid = new byte[38];
 		theStream.Read (QUuid, 0, 38);
@@ -28,7 +27,6 @@ public class ZMesh {
 		theStream.Read (bytes, 0, tailleNom);
 		string nom = System.Text.Encoding.ASCII.GetString (bytes);
 		nom = nom.Substring(14);
-		Debug.Log (nom); 
 		
 		//Nom du mesh
 		System.IO.File.WriteAllText (@".\Assets\Resources\"+nom, "o" + nom + "\n\n");
