@@ -52,7 +52,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
 		public void Move(Vector3 move, bool crouch, bool jump)
 		{
-
+			
+			//Debug.Log ("c'est pas mal");
 			// convert the world relative moveInput vector into a local-relative
 			// turn amount and forward amount required to head in the desired
 			// direction.
@@ -82,7 +83,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			UpdateAnimator(move);
 			TimeSpan diffTime = DateTime.UtcNow - m_lastSendTimer;
 			if (diffTime.Seconds > 1) {
-				//sendMoveToServer (move);
+				sendMoveToServer (move);
 				m_lastPosition = transform.position;
 				m_lastSendTimer = DateTime.UtcNow;
 			}
@@ -91,7 +92,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		public void sendMoveToServer(Vector3 move) {
 			GameObject o = GameObject.Find("connexionServer");
 			connexionClient cc = (connexionClient)o.GetComponent (typeof(connexionClient));
-			cc.envoieMove(0, 0, 0, transform.position, move);
+			cc.envoieMove(0, 0, transform.position, move);
 		}
 
 

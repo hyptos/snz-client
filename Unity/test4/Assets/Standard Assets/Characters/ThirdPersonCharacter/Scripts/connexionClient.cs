@@ -13,15 +13,15 @@ public class connexionClient : MonoBehaviour {
 	NetworkStream theStream;
 	StreamWriter theWriter;
 	StreamReader theReader;
-	String Host = "188.166.115.159";
-	Int32 Port = 8080;
+	String Host = "192.168.1.16";
+	Int32 Port = 3000;
 	
 	void Start () {   
 		setupSocket();
-		writeSocket("Tuturuuu");
+		//writeSocket("Tuturuuu");
 		Debug.Log ("ok");
-		readSocket();
-		closeSocket ();
+		//readSocket();
+		//closeSocket ();
 		
 	}
 	void Update () {
@@ -119,9 +119,9 @@ public class connexionClient : MonoBehaviour {
 			msg[i] = isInt[i];
 		}
 		msg[isInt.Length] = ident[0];
+
 		for (int i=5;i<asciiBytes.Length+5;i++){
-			msg[i] = asciiBytes[i-5
-			                    ];
+			msg[i] = asciiBytes[i-5];
 		}
 		theStream.Write (msg, 0, msg.Length);
 	}
@@ -134,8 +134,8 @@ public class connexionClient : MonoBehaviour {
 		return str;
 	}
 	
-	public void envoieMove(ulong id, int t, int s, Vector3 pos, Vector3 dir){
-		ZEvent eventMove = new ZEvent(id, t, s, pos.x, pos.y, pos.z, dir.x, dir.y, dir.z);
+	public void envoieMove(ulong id, int t, Vector3 pos, Vector3 dir){
+		ZEvent eventMove = new ZEvent(id, t, pos.x, pos.y, pos.z, dir.x, dir.y, dir.z);
 		byte[] msg = eventMove.toBinary();
 		Debug.Log ("position Envoyer");
 		theStream.Write (msg, 0, msg.Length);
