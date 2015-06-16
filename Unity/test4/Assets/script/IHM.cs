@@ -72,6 +72,9 @@ public class IHM : MonoBehaviour
 	GUISkin skinBarreExperience = null;
 	GUISkin skinBarreVide = null;
 	GUISkin skinBasique = null;
+
+	// Cursor 
+	bool cursor = false;
 	// Treads
 	bool threadDemarre = false;
 	static Thread thEnergie = new Thread (new ThreadStart (augmenteEnergie));
@@ -301,6 +304,7 @@ public class IHM : MonoBehaviour
 		//********** Quitter **********
 		if (quitterOuvert) 
 		{
+
 			float largeur_quitter = (float) 0.2 * Screen.width ; 
 			float hauteur_quitter = (float) 0.3 * Screen.height ; 
 			float x_quitter = (float) (Screen.width - largeur_quitter) / 2 ;
@@ -363,6 +367,9 @@ public class IHM : MonoBehaviour
 			paramsOuvert = false ; 
 			quitterOuvert = false ; 
 			inventaireOuvert = ! inventaireOuvert ; 
+			cursor = !cursor;
+			Cursor.visible = cursor;
+
 		}
 		else if(Input.GetKey (KeyCode.Escape))
 		{
@@ -370,6 +377,8 @@ public class IHM : MonoBehaviour
 			paramsOuvert = false ;  
 			inventaireOuvert = false ; 
 			quitterOuvert = ! quitterOuvert ; 
+			cursor = !cursor;
+			Cursor.visible = cursor;
 		}
 		else if(Input.GetKey (KeyCode.P))
 		{
@@ -377,6 +386,8 @@ public class IHM : MonoBehaviour
 			quitterOuvert = false ; 
 			inventaireOuvert = false ; 
 			paramsOuvert = ! paramsOuvert ; 
+			cursor = !cursor;
+			Cursor.visible = cursor;
 		}
 		else if(Input.GetKey (KeyCode.O))
 		{
@@ -384,6 +395,8 @@ public class IHM : MonoBehaviour
 			quitterOuvert = false ; 
 			inventaireOuvert = false ; 
 			socialOuvert = ! socialOuvert ; 
+			cursor = !cursor;
+			Cursor.visible = cursor;
 		}
 	}
 	
