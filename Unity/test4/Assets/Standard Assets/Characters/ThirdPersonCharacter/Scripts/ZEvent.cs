@@ -5,57 +5,49 @@ using System.IO;
 using System.Net.Sockets;
 
 public class ZEvent : MonoBehaviour {
-	
+
 	///Constructeur
 	public ZEvent(){
 		m_id = 0;
-		m_state = 0;
 		m_type = 0;
 		m_position = new Vector3 (0, 0, 0);
 		m_direction = new Vector3 (0, 0, 0);
 	}
 
 	///Constructeur
-	public ZEvent(ulong id, int t, int s, float x, float y, float z, float dx, float dy, float dz){
+	public ZEvent(ulong id, int t, float x, float y, float z, float dx, float dy, float dz){
 		m_id = id;
-		m_state = s;
 		m_type = t;
 		m_position = new Vector3 (x, y, z);
 		m_direction = new Vector3 (dx, dy, dz);
 	}
 	
 	///Retourne l'id de l'entité
-	ulong getEvent(){
+	public ulong getEvent(){
 		return this.m_id;
 	}
 	
 	///Retourne le type de l'entité
-	int getType(){
+	public int getType(){
 		return this.m_type;
 	}
-	
-	///Retourne l'état de l'entité
-	int getState(){
-		return this.m_state;
-	}
 
-	Vector3 getPosition (){
+	public Vector3 getPosition (){
 		return this.m_position;
 	}
-	Vector3 getDirection (){
+	public Vector3 getDirection (){
 		return this.m_direction;
 	}
 		
 	ulong m_id;    // Id de l'entité
 	
 	int m_type;        // Type de l'entité
-	int m_state;      // Etat de l'entité
 
 	Vector3 m_position;
 	Vector3 m_direction;
 
 	public byte[] toBinary(){
-		byte[] msg = new byte[68];
+		byte[] msg = new byte[64];
 		
 		//On prend la taille 
 		byte[] TailleBin = BitConverter.GetBytes(64);
@@ -68,34 +60,30 @@ public class ZEvent : MonoBehaviour {
 		//On prend le type
 		byte[] typeBin = BitConverter.GetBytes(m_type);
 		typeBin.CopyTo (msg, 12);
-		
-		//On prend le state
-		byte[] stateBin = BitConverter.GetBytes(m_state);
-		stateBin.CopyTo (msg, 16);
-		
+
 		//On prend la posX
 		byte[] posXBin = BitConverter.GetBytes(m_position.x);
-		posXBin.CopyTo (msg, 20);
+		posXBin.CopyTo (msg, 16);
 		
 		//On prend la posY
 		byte[] posYBin = BitConverter.GetBytes(m_position.y);
-		posYBin.CopyTo (msg, 28);
+		posYBin.CopyTo (msg, 24);
 		
 		//On prend la posZ
 		byte[] posZBin = BitConverter.GetBytes(m_position.z);
-		posZBin.CopyTo (msg, 36);
+		posZBin.CopyTo (msg, 32);
 		
 		//On prend la dirX
 		byte[] dirXBin = BitConverter.GetBytes(m_direction.x);
-		dirXBin.CopyTo (msg, 44);
+		dirXBin.CopyTo (msg, 40);
 		
 		//On prend la dirY
 		byte[] dirYBin = BitConverter.GetBytes(m_direction.y);
-		dirYBin.CopyTo (msg, 52);
+		dirYBin.CopyTo (msg, 48);
 		
 		//On prend la dirZ
 		byte[] dirZBin = BitConverter.GetBytes(m_direction.z);
-		dirZBin.CopyTo (msg, 60);
+		dirZBin.CopyTo (msg, 56);
 
 		return msg;
 	}
@@ -110,12 +98,7 @@ public class ZEvent : MonoBehaviour {
 		byte[] typeBin = new byte[4];
 		stream.Read(typeBin,0,4);
 		m_type = BitConverter.ToInt32(typeBin,0); 
-		
-		//On prend le state
-		byte[] stateBin = new byte[4];
-		stream.Read(stateBin,0,4);
-		m_state = BitConverter.ToInt32(stateBin,0); 
-		
+
 		//On prend la posX
 		byte[] posXBin = new byte[8];
 		stream.Read(posXBin,0,8);

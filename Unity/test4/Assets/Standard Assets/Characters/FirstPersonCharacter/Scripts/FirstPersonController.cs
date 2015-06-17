@@ -189,10 +189,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		
 		
 		public void sendMoveToServer(Vector3 move) {
-			/*GameObject o = GameObject.Find("connexionServer");
+			GameObject o = GameObject.Find("connexionServer");
 			connexionClient cc = (connexionClient)o.GetComponent (typeof(connexionClient));
-			cc.envoieMove(0, 0, transform.position, move);*/
-			Debug.Log ("envoie pos"+ move);
+			cc.envoieMove(0, 0, transform.position, move);
+			Debug.Log ("envoie pos"+ transform.position);
 
 		}
 		
