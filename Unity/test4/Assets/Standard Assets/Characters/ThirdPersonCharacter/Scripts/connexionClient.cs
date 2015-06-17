@@ -23,9 +23,7 @@ namespace UnityStandardAssets.Characters
 		
 		void Start () {   
 			setupSocket();
-			writeSocket("Tuturuuu");
-			writeSocket("Tuturuuu");
-			//readSocket();
+			readSocket();
 			//closeSocket();
 			
 		}
@@ -147,7 +145,7 @@ namespace UnityStandardAssets.Characters
 		}
 		
 		public void envoieMove(ulong id, int t, Vector3 pos, Vector3 dir){
-			/*ZEvent eventMove = new ZEvent(id, t, pos.x, pos.y, pos.z, dir.x, dir.y, dir.z);
+			ZEvent eventMove = new ZEvent(id, t, pos.x, pos.y, pos.z, dir.x, dir.y, dir.z);
 			byte[] evt = eventMove.toBinary();
 
 			byte[] isInt = new byte[4];
@@ -164,8 +162,7 @@ namespace UnityStandardAssets.Characters
 			for (int i=5;i<evt.Length+5;i++){
 				msg[i] = evt[i-5];
 			}
-			theStream.Write (msg, 0, msg.Length);*/
-			writeSocket("Totorooo");
+			theStream.Write (msg, 0, msg.Length);
 		}
 		
 		public void receiveMove(ZEvent monEvent){
