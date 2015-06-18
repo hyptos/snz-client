@@ -138,7 +138,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			TimeSpan diffTime = DateTime.UtcNow - m_lastSendTimer;
 			
 			if (diffTime.Seconds > 1) {
-				sendMoveToServer (m_CharacterController.transform.position);
+				sendMoveToServer ();
 				m_lastPosition = transform.position;
 				m_lastSendTimer = DateTime.UtcNow;
 			}
@@ -188,10 +188,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		}
 		
 		
-		public void sendMoveToServer(Vector3 move) {
+		public void sendMoveToServer() {
 			GameObject o = GameObject.Find("connexionServer");
 			connexionClient cc = (connexionClient)o.GetComponent (typeof(connexionClient));
-			cc.envoieMove(0, 0, transform.position, move);
+			cc.envoieMove(0, 0, m_CharacterController.transform.position, m_CharacterController.transform.forward);
 			Debug.Log ("envoie pos"+ transform.position);
 
 		}

@@ -40,7 +40,6 @@ public class ZEvent : MonoBehaviour {
 	}
 		
 	ulong m_id;    // Id de l'entité
-	
 	int m_type;        // Type de l'entité
 
 	Vector3 m_position;

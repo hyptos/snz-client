@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace UnityStandardAssets.Characters
 {
@@ -16,17 +17,24 @@ namespace UnityStandardAssets.Characters
 
 		TcpClient mySocket;
 		NetworkStream theStream;
-		StreamWriter theWriter;
-		StreamReader theReader;
-		String Host = "192.168.1.74";
+		String Host = "192.168.1.26";
 		Int32 Port = 3000;
 		
 		void Start () {   
 			setupSocket();
+			
+			Debug.Log("ça marche");
+			/*ZEvent eventMove = new ZEvent((ulong)0, 2, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+			byte[] evt = eventMove.toBinary();
+			formatAndSend ("c", evt);
+			ThreadStart listen = new ThreadStart(readSocket);
+			Thread thread = new Thread(listen);
+			thread.Start();*/
 			//readSocket();
 			//closeSocket();
 			
 		}
+
 		void Update () {
 		}
 		
@@ -34,8 +42,6 @@ namespace UnityStandardAssets.Characters
 			try {
 				mySocket = new TcpClient(Host, Port);
 				theStream = mySocket.GetStream(); 
-				theWriter = new StreamWriter(theStream);
-				theReader = new StreamReader(theStream);
 				socketReady = true;         
 			}
 			catch (Exception e) {
@@ -45,38 +51,52 @@ namespace UnityStandardAssets.Characters
 
 		public void readSocket(){
 			
-			//readRessource();
-			byte[] TabTaille = new byte[4];
-			theStream.Read(TabTaille,0,4);
-			int taille = BitConverter.ToInt32(TabTaille, 0);
-			
-			byte[] TabIdentifier = new byte[1];
-			theStream.Read(TabIdentifier,0,1);
-			char[] Identifier = System.Text.Encoding.ASCII.GetChars(TabIdentifier);
-			Debug.Log (Identifier.Length);
+			while (true) {
+				if(theStream.DataAvailable){
 
-			switch (Identifier[0])
-			{
-			case 'r':
-				//Read Ressourse
-				readRessource();
-				break;
-			case 'w':
-				//Read Ressourse
-				string str = readString(taille-1);
-				Debug.Log("reçu "+str);
-				break;
-			case 'u':
-				//Event
-				ZEvent monEvent = new ZEvent();
-				monEvent.fromBinary(theStream);
-				break;
-			default:
-				taille = taille-1;
-				Debug.Log ("type inconnue, je jette tout : " + taille + "Byte");
-				byte[] dechet = new byte[taille];
-				theStream.Read(dechet,0,taille);
-				break;
+					if(socketReady == true)
+						Debug.Log("J'entre dans la lecture !!!!!!!");
+					//readRessource();
+					byte[] TabTaille = new byte[4];
+					theStream.Read(TabTaille,0,4);
+					int taille = BitConverter.ToInt32(TabTaille, 0);
+					
+					byte[] TabIdentifier = new byte[1];
+					theStream.Read(TabIdentifier,0,1);
+					char[] Identifier = System.Text.Encoding.ASCII.GetChars(TabIdentifier);
+					Debug.Log (Identifier.Length);
+
+					switch (Identifier[0])
+					{
+					case 'r':
+						//Read Ressourse
+						readRessource();
+						break;
+					case 'w':
+						//Read Ressourse
+						string str = readString(taille-1);
+						Debug.Log("reçu "+str);
+						break;
+					case 'u':
+						//Event
+						ZEvent monEvent = new ZEvent();
+						monEvent.fromBinary(theStream);
+						receiveMove(monEvent);
+						break;
+					case 'c':
+						//connexion
+						ZEvent maConn = new ZEvent();
+						maConn.fromBinary(theStream);
+						receiveMove(maConn);
+						break;
+					default:
+						taille = taille-1;
+						Debug.Log ("type inconnue, je jette tout : " + taille + "Byte");
+						byte[] dechet = new byte[taille];
+						theStream.Read(dechet,0,taille);
+						break;
+					}
+				}
 			}
 		}
 		
@@ -109,73 +129,56 @@ namespace UnityStandardAssets.Characters
 		}
 
 		public void writeSocket(string theLine) {
-			
-			byte[] isInt = new byte[4];
-			isInt = BitConverter.GetBytes((UInt32)theLine.Length);
-
 			byte[] asciiBytes = System.Text.Encoding.ASCII.GetBytes(theLine);
-
-			byte[] ident = System.Text.Encoding.ASCII.GetBytes("w");
-
-			byte[] msg = new byte[isInt.Length+asciiBytes.Length+1];
-
-			for (int i=0;i<isInt.Length;i++){
-				msg[i] = isInt[i];
-			}
-			msg[isInt.Length] = ident[0];
-			for (int i=5;i<asciiBytes.Length+5;i++){
-				msg[i] = asciiBytes[i-5];
-			}
-
-			if (theStream.CanWrite){
-				theStream.Write (msg, 0, msg.Length);
-			}
-			else{
-				Debug.Log("Sorry.  You cannot write to this NetworkStream.");  
-			}
-			//theStream.EndWrite
+			formatAndSend ("w", asciiBytes);
 		}
 		
 		public string readString(int taille) {
 			byte[] bytes = new byte[taille];
 			theStream.Read(bytes,0,taille);
 			string str = System.Text.Encoding.ASCII.GetString(bytes);
-
 			return str;
 		}
 		
 		public void envoieMove(ulong id, int t, Vector3 pos, Vector3 dir){
 			ZEvent eventMove = new ZEvent(id, t, pos.x, pos.y, pos.z, dir.x, dir.y, dir.z);
 			byte[] evt = eventMove.toBinary();
+			formatAndSend ("u", evt);
+		}
 
-			byte[] isInt = new byte[4];
-			isInt = BitConverter.GetBytes((UInt32)(evt.Length+1));
-
-			byte[] ident = System.Text.Encoding.ASCII.GetBytes("u");
+		public void formatAndSend(string ident, byte[] data){
 			
-			byte[] msg = new byte[isInt.Length+evt.Length+1];
+			byte[] isInt = new byte[4];
+			isInt = BitConverter.GetBytes((UInt32)(data.Length+1));
+			
+			byte[] identB = System.Text.Encoding.ASCII.GetBytes(ident);
+			
+			byte[] msg = new byte[isInt.Length+data.Length+1];
 			
 			for (int i=0;i<isInt.Length;i++){
 				msg[i] = isInt[i];
 			}
-			msg[isInt.Length] = ident[0];
-			for (int i=5;i<evt.Length+5;i++){
-				msg[i] = evt[i-5];
+			msg[isInt.Length] = identB[0];
+			for (int i=5;i<data.Length+5;i++){
+				msg[i] = data[i-5];
 			}
-			theStream.Write (msg, 0, msg.Length);
-			theStream.Flush ();
+			if (theStream.CanWrite){
+				theStream.Write (msg, 0, msg.Length);
+			}
+			else{
+				Debug.Log("Sorry.  You cannot write to this NetworkStream.");  
+			}
 		}
-		
+
 		public void receiveMove(ZEvent monEvent){
 			int ID = 0;
 			if (Characters.TryGetValue (monEvent.getEvent(), out ID)) {
 				Debug.Log ("z@walk "+ID);
-				/*Transform trf = new Transform();
-				trf.position = monEvent.getPosition();
-				trf.transform.TransformDirection(monEvent.getDirection());
 				GameObject o = GameObject.Find("z@walk "+ID);
 				AICharacterControl cc = (AICharacterControl)o.GetComponent (typeof(AICharacterControl));
-				cc.SetTarget(transform.position);*/
+				o.transform.position = monEvent.getPosition();
+				o.transform.forward = monEvent.transform.forward;
+				cc.SetTarget(o.transform);
 
 			} else {
 				//on fait pop le zombie ou le characters
@@ -187,8 +190,6 @@ namespace UnityStandardAssets.Characters
 		public void closeSocket() {
 			if (!socketReady)
 				return;
-			theWriter.Close();
-			theReader.Close();
 			mySocket.Close();
 			socketReady = false;
 		}
