@@ -23,7 +23,7 @@ namespace UnityStandardAssets.Characters
 		
 		void Start () {   
 			setupSocket();
-			readSocket();
+			//readSocket();
 			//closeSocket();
 			
 		}
@@ -149,7 +149,7 @@ namespace UnityStandardAssets.Characters
 			byte[] evt = eventMove.toBinary();
 
 			byte[] isInt = new byte[4];
-			isInt = BitConverter.GetBytes((UInt32)evt.Length);
+			isInt = BitConverter.GetBytes((UInt32)(evt.Length+1));
 
 			byte[] ident = System.Text.Encoding.ASCII.GetBytes("u");
 			
@@ -163,6 +163,7 @@ namespace UnityStandardAssets.Characters
 				msg[i] = evt[i-5];
 			}
 			theStream.Write (msg, 0, msg.Length);
+			theStream.Flush ();
 		}
 		
 		public void receiveMove(ZEvent monEvent){

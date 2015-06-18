@@ -47,43 +47,39 @@ public class ZEvent : MonoBehaviour {
 	Vector3 m_direction;
 
 	public byte[] toBinary(){
-		byte[] msg = new byte[64];
-		
-		//On prend la taille 
-		byte[] TailleBin = BitConverter.GetBytes(64);
-		TailleBin.CopyTo (msg, 0);
+		byte[] msg = new byte[36];
 
 		//On prend l'ID 
 		byte[] IDBin = BitConverter.GetBytes(m_id);
-		IDBin.CopyTo (msg, 4);
+		IDBin.CopyTo (msg, 0);
 		
 		//On prend le type
 		byte[] typeBin = BitConverter.GetBytes(m_type);
-		typeBin.CopyTo (msg, 12);
+		typeBin.CopyTo (msg, 8);
 
 		//On prend la posX
 		byte[] posXBin = BitConverter.GetBytes(m_position.x);
-		posXBin.CopyTo (msg, 16);
+		posXBin.CopyTo (msg, 12);
 		
 		//On prend la posY
 		byte[] posYBin = BitConverter.GetBytes(m_position.y);
-		posYBin.CopyTo (msg, 24);
+		posYBin.CopyTo (msg, 16);
 		
 		//On prend la posZ
 		byte[] posZBin = BitConverter.GetBytes(m_position.z);
-		posZBin.CopyTo (msg, 32);
+		posZBin.CopyTo (msg, 20);
 		
 		//On prend la dirX
 		byte[] dirXBin = BitConverter.GetBytes(m_direction.x);
-		dirXBin.CopyTo (msg, 40);
+		dirXBin.CopyTo (msg, 24);
 		
 		//On prend la dirY
 		byte[] dirYBin = BitConverter.GetBytes(m_direction.y);
-		dirYBin.CopyTo (msg, 48);
+		dirYBin.CopyTo (msg, 28);
 		
 		//On prend la dirZ
 		byte[] dirZBin = BitConverter.GetBytes(m_direction.z);
-		dirZBin.CopyTo (msg, 56);
+		dirZBin.CopyTo (msg, 32);
 
 		return msg;
 	}
