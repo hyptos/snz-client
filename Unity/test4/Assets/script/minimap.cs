@@ -34,14 +34,14 @@ public class minimap : MonoBehaviour {
 		zombiesArrow = (Texture2D) Resources.Load ("flecheZombies");
 		if (map.enabled) {
 			Vector3 objPos = map.WorldToViewportPoint(me.transform.position);
-			float meAngle = me.transform.eulerAngles.y-180;
+			float meAngle = me.transform.eulerAngles.y;
 			Matrix4x4 guiRotationMatrix = GUI.matrix;
 			Vector2 pivotMe;
 			pivotMe.x = Screen.width*(map.rect.x + (objPos.x * map.rect.width));
 			pivotMe.y = Screen.height * (1-(map.rect.y + (objPos.y * map.rect.height)));
 			GUIUtility.RotateAroundPivot(meAngle,pivotMe);
 			float hauteur_map = (float) 0.25 * Screen.height; 
-			GUI.DrawTexture(new Rect((float)(Screen.width * (map.rect.x + (objPos.x*map.rect.width))-7.5),(float) (Screen.height * (1-(map.rect.y + (objPos.y * map.rect.height)))-7.5), 25, 25),meArrow);
+			GUI.DrawTexture(new Rect((float)(Screen.width * (map.rect.x + (objPos.x*map.rect.width))-12.5),(float) (Screen.height * (1-(map.rect.y + (objPos.y * map.rect.height)))-12.5), 25, 25),meArrow);
 			GUI.matrix = guiRotationMatrix;
 
 			int i = 0;
@@ -54,7 +54,7 @@ public class minimap : MonoBehaviour {
 				pivotZombie.x = Screen.width*(map.rect.x + (zombiesPos.x * map.rect.width));
 				pivotZombie.y = Screen.height * (1-(map.rect.y + (zombiesPos.y * map.rect.height)));
 				GUIUtility.RotateAroundPivot(zombieAngle,pivotZombie);
-				GUI.DrawTexture(new Rect((float)(Screen.width * (map.rect.x + (zombiesPos.x*map.rect.width))-7.5),(float) (Screen.height * (1-(map.rect.y + (zombiesPos.y * map.rect.height)))-7.5), 25, 25),zombiesArrow);
+				GUI.DrawTexture(new Rect((float)(Screen.width * (map.rect.x + (zombiesPos.x*map.rect.width))-12.5),(float) (Screen.height * (1-(map.rect.y + (zombiesPos.y * map.rect.height)))-12.5), 25, 25),zombiesArrow);
 				GUI.matrix = guiRMatrix;
 			}
 		}
