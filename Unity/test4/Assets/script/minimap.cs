@@ -1,27 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic ; 
 
 public class minimap : MonoBehaviour {
 	Transform me;
-	Transform[] zombies = new Transform[4];
+	GameObject[] zombies;
+	//Transform[] zombies;
+	
 	Texture2D meArrow;
 	Texture2D zombiesArrow;
 	Camera map;
 	int MARGE_GENERALE = 10;
-
-	//string debug = "dsfsdfsdfds";
+	string debug;
 	void start() 
 	{
 	}
-
+	
 	void OnGUI()
 	{
 		//debug = GUI.TextArea(new Rect(100, 100, 100, 100),debug);
 		me = GameObject.Find("Alexis").transform;
-		zombies[0] = GameObject.Find ("z@walk").transform;
-		zombies[1] = GameObject.Find ("z@walk 1").transform;
-		zombies[2] = GameObject.Find ("z@walk 2").transform;
-		zombies[3] = GameObject.Find ("z@walk 3").transform;
+		int i = 0;
+		zombies = tableauZombies(9); 
+		
+		
 		foreach (Camera c in Camera.allCameras) 
 		{
 			if(c.name=="CameraMap")
@@ -43,12 +45,12 @@ public class minimap : MonoBehaviour {
 			float hauteur_map = (float) 0.25 * Screen.height; 
 			GUI.DrawTexture(new Rect((float)(Screen.width * (map.rect.x + (objPos.x*map.rect.width))-12.5),(float) (Screen.height * (1-(map.rect.y + (objPos.y * map.rect.height)))-12.5), 25, 25),meArrow);
 			GUI.matrix = guiRotationMatrix;
-
-			int i = 0;
-			for(i = 0;i<4;i++)
+			
+			i = 0;
+			for(i = 0;i<zombies.Length;i++)
 			{
-				float zombieAngle = zombies[i].transform.eulerAngles.y;
-				Vector3 zombiesPos = map.WorldToViewportPoint(zombies[i].transform.position);
+				float zombieAngle = zombies[i].transform.transform.eulerAngles.y;
+				Vector3 zombiesPos = map.WorldToViewportPoint(zombies[i].transform.transform.position);
 				Matrix4x4 guiRMatrix = GUI.matrix;
 				Vector2 pivotZombie;
 				pivotZombie.x = Screen.width*(map.rect.x + (zombiesPos.x * map.rect.width));
@@ -59,12 +61,12 @@ public class minimap : MonoBehaviour {
 			}
 		}
 	}
-
+	
 	void Update()
 	{ 
-		//transform.position = new Vector3 (target.transform.position.x, target.transform.position.y, target.transform.position.z); 
+		transform.position = new Vector3 (me.transform.position.x, transform.transform.position.y, me.transform.position.z); 
 	}
-
+	
 	Texture2D MakeTex( int width, int height, Color col )
 	{
 		Color[] pix = new Color[width * height];
@@ -76,5 +78,23 @@ public class minimap : MonoBehaviour {
 		result.SetPixels( pix );
 		result.Apply();
 		return result;
+	}
+	
+	GameObject[] tableauZombies(int layer)
+	{
+		List<GameObject> zombies = new List<GameObject>();
+		GameObject[] obj = FindObjectsOfType(typeof(GameObject)) as GameObject[];
+		int l = 0, i = 0;
+		for (i = 0; i < obj.Length; i++) 
+		{
+			if(obj[i].layer == 9 && (zombies.Contains(obj[i])) == false)
+			{
+				//debug = GUI.TextField (new Rect (20*l, 20*l, 20, 20),"'"+obj [i].layer.ToString ()+"'");
+				zombies.Add(obj[i]);
+				l++;
+				//print("layer = "+obj[i].layer.ToString());
+			}
+		}
+		return zombies.ToArray();
 	}
 }
