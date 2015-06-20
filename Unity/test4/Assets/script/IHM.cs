@@ -33,6 +33,7 @@ public class IHM : MonoBehaviour
 	/*** Données liées au joueur ***************/
 	/*******************************************/
 	string pseudo_joueur = "Sacapof" ; 
+	//string pseudo_joueur = MultiplayerManager.instance.name ; 
 	string nom_image_joueur = "test_image_joueur" ; 
 	int pts_vie_joueur = 70 ; 
 	int pts_exp_joueur = 40 ; 
