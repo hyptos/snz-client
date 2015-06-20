@@ -1,4 +1,4 @@
-﻿//css_import Mesh.cs, ZEvent.cs
+﻿//css_import Mesh.cs, ZEvent.cs, InputIp.cs
 using UnityEngine;
 using UnityStandardAssets.Characters.ThirdPerson;
 using System.Collections;
@@ -11,18 +11,17 @@ using System.Threading;
 namespace UnityStandardAssets.Characters
 {
 	public class connexionClient : MonoBehaviour {
-
 		internal Boolean socketReady = false;
 		Dictionary<ulong, int> Characters = new Dictionary<ulong, int>();
 
 
 		TcpClient mySocket;
 		NetworkStream theStream;
-		String Host = "192.168.1.74";
+		String Host = InputIP.IP_Host;
 		Int32 Port = 3000;
 		ulong IDjoueur;
 		
-		void Start () {  
+		void Start () {
 			setupSocket();
 			ZEvent eventMove = new ZEvent((ulong)0, 2, 495.7633f, 0.0f, 495.411f, 0.0f, 0.0f, 0.0f);
 			byte[] evt = eventMove.toBinary();
@@ -43,6 +42,7 @@ namespace UnityStandardAssets.Characters
 		
 		public void setupSocket() { 
 			try {
+				Debug.Log("Host : " + Host + " Port : " + Port);
 				mySocket = new TcpClient(Host, Port);
 				theStream = mySocket.GetStream(); 
 				socketReady = true;         
