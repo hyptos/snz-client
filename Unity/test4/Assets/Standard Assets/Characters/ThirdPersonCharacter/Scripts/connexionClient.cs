@@ -17,25 +17,27 @@ namespace UnityStandardAssets.Characters
 
 		TcpClient mySocket;
 		NetworkStream theStream;
-		String Host = "192.168.1.26";
+		String Host = "192.168.1.194";
 		Int32 Port = 3000;
+		ulong IDjoueur;
 		
-		void Start () {   
+		void Start () {  
 			setupSocket();
-			
-			Debug.Log("ça marche");
-			/*ZEvent eventMove = new ZEvent((ulong)0, 2, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+			ZEvent eventMove = new ZEvent((ulong)0, 2, 495.7633f, 0.0f, 495.411f, 0.0f, 0.0f, 0.0f);
 			byte[] evt = eventMove.toBinary();
 			formatAndSend ("c", evt);
-			ThreadStart listen = new ThreadStart(readSocket);
+			readSocket();
+			/*ThreadStart listen = new ThreadStart(readSocket);
 			Thread thread = new Thread(listen);
 			thread.Start();*/
-			//readSocket();
 			//closeSocket();
 			
 		}
 
 		void Update () {
+			if (theStream.DataAvailable) {
+				readSocket ();
+			}
 		}
 		
 		public void setupSocket() { 
@@ -50,53 +52,50 @@ namespace UnityStandardAssets.Characters
 		}
 
 		public void readSocket(){
+
+			//readRessource();
+			byte[] TabTaille = new byte[4];
+			theStream.Read(TabTaille,0,4);
+			int taille = BitConverter.ToInt32(TabTaille, 0);
 			
-			while (true) {
-				if(theStream.DataAvailable){
+			byte[] TabIdentifier = new byte[1];
+			theStream.Read(TabIdentifier,0,1);
+			char[] Identifier = System.Text.Encoding.ASCII.GetChars(TabIdentifier);
+			Debug.Log (Identifier.Length);
 
-					if(socketReady == true)
-						Debug.Log("J'entre dans la lecture !!!!!!!");
-					//readRessource();
-					byte[] TabTaille = new byte[4];
-					theStream.Read(TabTaille,0,4);
-					int taille = BitConverter.ToInt32(TabTaille, 0);
-					
-					byte[] TabIdentifier = new byte[1];
-					theStream.Read(TabIdentifier,0,1);
-					char[] Identifier = System.Text.Encoding.ASCII.GetChars(TabIdentifier);
-					Debug.Log (Identifier.Length);
+			switch (Identifier[0])
+			{
+			case 'r':
+				//Read Ressourse
+				readRessource();
+				break;
+			case 'w':
+				//Read Ressourse
+				string str = readString(taille-1);
+				Debug.Log("reçu "+str);
+				break;
+			case 'u':
+				//Event
+				ZEvent monEvent = new ZEvent();
+				monEvent.fromBinary(theStream);
+				receiveMove(monEvent);
+				break;
+			case 'c':
+				//connexion
+				ZEvent maConn = new ZEvent();
+				maConn.fromBinary(theStream);
+				//receiveMove(maConn);
+				IDjoueur = maConn.getEvent();
+				//Debug.Log("connexion !! "+maConn.getEvent()+" "+maConn.getType()+" "+maConn.getPosition().x+" "+maConn.getPosition().y+" "+maConn.getPosition().z);
+				//Debug.Log("connexion !! "+maConn.getEvent()+" "+maConn.getType()+" "+maConn.getDirection().x+" "+maConn.getDirection().y+" "+maConn.getDirection().z);
 
-					switch (Identifier[0])
-					{
-					case 'r':
-						//Read Ressourse
-						readRessource();
-						break;
-					case 'w':
-						//Read Ressourse
-						string str = readString(taille-1);
-						Debug.Log("reçu "+str);
-						break;
-					case 'u':
-						//Event
-						ZEvent monEvent = new ZEvent();
-						monEvent.fromBinary(theStream);
-						receiveMove(monEvent);
-						break;
-					case 'c':
-						//connexion
-						ZEvent maConn = new ZEvent();
-						maConn.fromBinary(theStream);
-						receiveMove(maConn);
-						break;
-					default:
-						taille = taille-1;
-						Debug.Log ("type inconnue, je jette tout : " + taille + "Byte");
-						byte[] dechet = new byte[taille];
-						theStream.Read(dechet,0,taille);
-						break;
-					}
-				}
+				break;
+			default:
+				taille = taille-1;
+				Debug.Log ("type inconnue, je jette tout : " + taille + "Byte");
+				byte[] dechet = new byte[taille];
+				theStream.Read(dechet,0,taille);
+				break;
 			}
 		}
 		
@@ -118,7 +117,6 @@ namespace UnityStandardAssets.Characters
 			string type = System.Text.Encoding.ASCII.GetString(bytes);
 			
 			if (type == "Mesh") {
-				Debug.Log ("yop");
 				ZMesh monMesh = new ZMesh();
 				monMesh.readMesh(theStream);
 			} else {
@@ -140,8 +138,8 @@ namespace UnityStandardAssets.Characters
 			return str;
 		}
 		
-		public void envoieMove(ulong id, int t, Vector3 pos, Vector3 dir){
-			ZEvent eventMove = new ZEvent(id, t, pos.x, pos.y, pos.z, dir.x, dir.y, dir.z);
+		public void envoieMove(Vector3 pos, Vector3 dir){
+			ZEvent eventMove = new ZEvent(IDjoueur, 2, pos.x, pos.y, pos.z, dir.x, dir.y, dir.z);
 			byte[] evt = eventMove.toBinary();
 			formatAndSend ("u", evt);
 		}
@@ -172,13 +170,15 @@ namespace UnityStandardAssets.Characters
 
 		public void receiveMove(ZEvent monEvent){
 			int ID = 0;
+			if(monEvent.getEvent() == IDjoueur)
+				return;
 			if (Characters.TryGetValue (monEvent.getEvent(), out ID)) {
-				Debug.Log ("z@walk "+ID);
 				GameObject o = GameObject.Find("z@walk "+ID);
 				AICharacterControl cc = (AICharacterControl)o.GetComponent (typeof(AICharacterControl));
-				o.transform.position = monEvent.getPosition();
-				o.transform.forward = monEvent.transform.forward;
-				cc.SetTarget(o.transform);
+				transform.position = monEvent.getPosition();
+				//Debug.Log ("z@walk "+ID+" "+monEvent.getPosition().x+" "+monEvent.getPosition().y+" "+monEvent.getPosition().z+" ");
+				//o.transform.forward = monEvent.transform.forward;
+				cc.SetTarget(transform);
 
 			} else {
 				//on fait pop le zombie ou le characters

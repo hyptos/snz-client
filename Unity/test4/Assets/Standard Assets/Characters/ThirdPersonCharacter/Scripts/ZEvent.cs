@@ -95,35 +95,35 @@ public class ZEvent : MonoBehaviour {
 		m_type = BitConverter.ToInt32(typeBin,0); 
 
 		//On prend la posX
-		byte[] posXBin = new byte[8];
-		stream.Read(posXBin,0,8);
+		byte[] posXBin = new byte[4];
+		stream.Read(posXBin,0,4);
 		float posx = BitConverter.ToSingle(posXBin,0); 
 
 		//On prend la posY
-		byte[] posYBin = new byte[8];
-		stream.Read(posYBin,0,8);
+		byte[] posYBin = new byte[4];
+		stream.Read(posYBin,0,4);
 		float posy = BitConverter.ToSingle(posYBin,0); 
 		
 		//On prend la posZ
-		byte[] posZBin = new byte[8];
-		stream.Read(posZBin,0,8);
+		byte[] posZBin = new byte[4];
+		stream.Read(posZBin,0,4);
 		float posz = BitConverter.ToSingle(posZBin,0); 
 
 		m_position = new Vector3(posx, posy, posz);
 		
 		//On prend la dirX
-		byte[] dirXBin = new byte[8];
-		stream.Read(dirXBin,0,8);
+		byte[] dirXBin = new byte[4];
+		stream.Read(dirXBin,0,4);
 		float dirx = BitConverter.ToSingle(dirXBin,0); 
 		
 		//On prend la dirY
-		byte[] dirYBin = new byte[8];
-		stream.Read(dirYBin,0,8);
+		byte[] dirYBin = new byte[4];
+		stream.Read(dirYBin,0,4);
 		float diry = BitConverter.ToSingle(dirYBin,0); 
 		
 		//On prend la dirZ
-		byte[] dirZBin = new byte[8];
-		stream.Read(dirZBin,0,8);
+		byte[] dirZBin = new byte[4];
+		stream.Read(dirZBin,0,4);
 		float dirz = BitConverter.ToSingle(dirZBin,0); 
 		
 		m_direction = new Vector3 (dirx, diry, dirz);
