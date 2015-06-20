@@ -15,27 +15,12 @@ namespace UnityStandardAssets.Characters
 		internal Boolean socketReady = false;
 		Dictionary<ulong, int> Characters = new Dictionary<ulong, int>();
 
-<<<<<<< HEAD
-	TcpClient mySocket;
-	NetworkStream theStream;
-	StreamWriter theWriter;
-	StreamReader theReader;
-	String Host = "192.168.1.16";
-	Int32 Port = 3000;
-	
-	void Start () {   
-		setupSocket();
-		//writeSocket("Tuturuuu");
-		Debug.Log ("ok");
-		//readSocket();
-		//closeSocket ();
-=======
+
 		TcpClient mySocket;
 		NetworkStream theStream;
 		String Host = "192.168.1.194";
 		Int32 Port = 3000;
 		ulong IDjoueur;
->>>>>>> feature-fps
 		
 		void Start () {  
 			setupSocket();
@@ -146,12 +131,6 @@ namespace UnityStandardAssets.Characters
 			byte[] asciiBytes = System.Text.Encoding.ASCII.GetBytes(theLine);
 			formatAndSend ("w", asciiBytes);
 		}
-<<<<<<< HEAD
-		msg[isInt.Length] = ident[0];
-
-		for (int i=5;i<asciiBytes.Length+5;i++){
-			msg[i] = asciiBytes[i-5];
-=======
 		
 		public string readString(int taille) {
 			byte[] bytes = new byte[taille];
@@ -164,7 +143,6 @@ namespace UnityStandardAssets.Characters
 			ZEvent eventMove = new ZEvent(IDjoueur, 2, pos.x, pos.y, pos.z, dir.x, dir.y, dir.z);
 			byte[] evt = eventMove.toBinary();
 			formatAndSend ("u", evt);
->>>>>>> feature-fps
 		}
 
 		public void formatAndSend(string ident, byte[] data){
@@ -191,17 +169,6 @@ namespace UnityStandardAssets.Characters
 			}
 		}
 
-<<<<<<< HEAD
-		return str;
-	}
-	
-	public void envoieMove(ulong id, int t, Vector3 pos, Vector3 dir){
-		ZEvent eventMove = new ZEvent(id, t, pos.x, pos.y, pos.z, dir.x, dir.y, dir.z);
-		byte[] msg = eventMove.toBinary();
-		Debug.Log ("position Envoyer");
-		theStream.Write (msg, 0, msg.Length);
-	}
-=======
 		public void receiveMove(ZEvent monEvent){
 			int ID = 0;
 			if(monEvent.getEvent() == IDjoueur)
@@ -213,8 +180,6 @@ namespace UnityStandardAssets.Characters
 				//Debug.Log ("z@walk "+ID+" "+monEvent.getPosition().x+" "+monEvent.getPosition().y+" "+monEvent.getPosition().z+" ");
 				//o.transform.forward = monEvent.transform.forward;
 				cc.SetTarget(transform);
->>>>>>> feature-fps
-
 			} else {
 				//on fait pop le zombie ou le characters
 				Characters.Add(monEvent.getEvent(),(int)monEvent.getEvent());
