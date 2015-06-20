@@ -15,13 +15,14 @@ public class ClicktoLoadAsync : MonoBehaviour {
 		StartCoroutine (LoadLevelWithBar(level));
 	}
 
-	IEnumerator LoadLevelWithBar(int level)
+	IEnumerator LoadLevelWithBar(int level )
 	{
 		async = Application.LoadLevelAsync (level);
 		while (!async.isDone) {
 			loadingbar.value=async.progress;
 			yield return null;
 		}
+
 	}
 
 }
