@@ -18,7 +18,7 @@ namespace UnityStandardAssets.Characters
 
 		TcpClient mySocket;
 		NetworkStream theStream;
-		String Host = "192.168.1.194";
+		String Host = "192.168.1.74";
 		Int32 Port = 3000;
 		ulong IDjoueur;
 		

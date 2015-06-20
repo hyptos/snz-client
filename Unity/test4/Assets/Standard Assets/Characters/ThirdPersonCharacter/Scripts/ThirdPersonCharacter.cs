@@ -92,7 +92,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		public void sendMoveToServer(Vector3 move) {
 			GameObject o = GameObject.Find("connexionServer");
 			connexionClient cc = (connexionClient)o.GetComponent (typeof(connexionClient));
-			cc.envoieMove(0, 0, transform.position, move);
+			cc.envoieMove(transform.position, move);
 		}
 
 
