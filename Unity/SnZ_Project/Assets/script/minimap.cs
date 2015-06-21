@@ -62,9 +62,8 @@ public class minimap : MonoBehaviour {
 		}
 	}
 	
-	void Update()
-	{ 
-		transform.position = new Vector3 (me.transform.position.x, transform.transform.position.y, me.transform.position.z); 
+	void Update(){
+		transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z); 
 	}
 	
 	Texture2D MakeTex( int width, int height, Color col )

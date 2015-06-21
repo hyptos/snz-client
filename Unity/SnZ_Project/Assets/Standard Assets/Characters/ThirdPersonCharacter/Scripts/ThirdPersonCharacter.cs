@@ -81,12 +81,6 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
 			// send input and other state parameters to the animator
 			UpdateAnimator(move);
-			TimeSpan diffTime = DateTime.UtcNow - m_lastSendTimer;
-			if (diffTime.Seconds > 1) {
-				sendMoveToServer (move);
-				m_lastPosition = transform.position;
-				m_lastSendTimer = DateTime.UtcNow;
-			}
 		}
 		
 		public void sendMoveToServer(Vector3 move) {
